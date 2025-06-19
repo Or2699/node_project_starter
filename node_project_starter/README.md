@@ -33,6 +33,7 @@
 
 ## Setup
 bash
+cd node_project_starter
 npm install
 npm install express cors dotenv winston
 npm install --save-dev nodemon
@@ -67,3 +68,9 @@ POST /users/register  //הרשמה
 GET /meals/search?s=Chicken //חיפוש מנות לפי שם 
 GET /meals/:id //קבלת מנה לפי מזהה
 DELETE /users/:token //מחיקת משתמש לפי טוקן
+
+## דוגמאות 
+GET https://www.themealdb.com/api/json/v1/1/search.php?s=Chicken
+GET https://www.themealdb.com/api/json/v1/1/lookup.php?i=52879
+POST /users/register
+DELETE /users/:token
