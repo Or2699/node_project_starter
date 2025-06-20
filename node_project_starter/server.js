@@ -1,12 +1,11 @@
 import app from './app.js';   // מייבא את האפליקציה שהגדרתי בקובץ app.js
-import dotenv from 'dotenv'; // מאפשר שימוש בקובץ .env 
+ import { port } from './config/configuration.js'
 
-dotenv.config();  // טוען את המשתנים מקובץ- port
 
-const PORT = process.env.PORT || 3000;
+//const PORT = process.env.PORT || 5003;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${port}`);
 });
 
 

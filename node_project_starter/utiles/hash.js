@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt'; //הצפנת סיסמאות 
 
 
 const SALT = 10;

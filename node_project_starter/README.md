@@ -35,7 +35,7 @@
 bash
 cd node_project_starter
 npm install
-npm install express cors dotenv winston
+npm install express cors dotenv winston jsonwebtoken bcrypt
 npm install --save-dev nodemon
 npm start
 npm run dev
@@ -56,12 +56,18 @@ project-folder/
 │   └── meal.controller.js
 ├── services/                # שירותים חיצוניים, לדוגמה צריכת API
 │   └── meal.service.js
+       user.service.js
 ├── middlewares/             # Middleware – אימות, לוגינג וכו'
 │   ├── auth.middleware.js
 │   └── logger.middleware.js
 ├── utils/                   # כלים ועזרים נוספים
-│   └── token.util.js        # פונקציה ליצירת טוקן רנדומלי
-├── .env                     # משתני סביבה (כגון PORT)
+│   ├── logger.js            # לוגר (Winston)
+│   ├── hash.js              # פונקציה להאש של סיסמאות
+│   ├── filter.js            # פונקציה לפילטרים (לבדוק אם נתונים נכונים)
+│   └── token.util.js        # פונקציות לניהול טוקנים (JWT)
+├── config/                  # קונפיגורציה (כמו משתני סביבה, קובץ הגדרות)
+│   └── config.js            # הגדרות כמו secret של JWT וכו'
+├── .env                     # משתני סביבה (כגון PORT, JWT_SECRET, TOKEN)
 └── package.json             # הגדרות פרויקט ותלויות
 
 POST /users/register  //הרשמה
@@ -74,3 +80,31 @@ GET https://www.themealdb.com/api/json/v1/1/search.php?s=Chicken
 GET https://www.themealdb.com/api/json/v1/1/lookup.php?i=52879
 POST /users/register
 DELETE /users/:token
+
+
+## הסברים 
+Client ➝   // הלקוח שולח בקשה (למשל, חיפוש מנות לפי שם)
+  |
+Middleware ➝   // המידלוור בודק את הבקשה: 
+                // האם יש טוקן? האם הוא תקין? 
+                // האם הבקשה מכילה פרמטרים חוקיים?
+  |
+Route ➝   // הנתיב (Route) בודק את הכתובת שנשלחה 
+                // ומפנה את הבקשה ל־Controller המתאים.
+                // לדוגמה, אם בקשה היא `GET /meals/search`, היא תופנה ל־meal.controller.js
+  |
+Controller ➝  // הקונטרולר מקבל את הבקשה ומבצע את הלוגיקה העסקית.
+                // לדוגמה, בקשת חיפוש מנות מחברת את הלקוח עם ה־Service המתאים
+  |
+Service ➝   // השירות מבצע פעולות על הנתונים.
+                // לדוגמה, בקריאת API לשליפת מנות מתוך TheMealDB.
+  |
+API ➝   // שירות ה־API של TheMealDB מקבל את הקריאה, מחפש את המידע הרלוונטי ומחזיר תוצאות.
+  |
+Service ➝  // השירות מקבל את התשובה מה־API ומבצע עיבוד נוסף אם יש צורך, 
+                // ואז מחזיר את התוצאה ל־Controller.
+  |
+Controller ➝  // הקונטרולר מעבד את התשובה ומחזיר אותה כתגובה ללקוח.
+                // לדוגמה, מבצע עיבוד על המידע, רושם אותו בלוג, ומחזיר תוצאה כ־JSON.
+  |
+Response ➝  // השרת מחזיר את התגובה הסופית ללקוח (למשל, JSON עם המנות שנמצאו).
