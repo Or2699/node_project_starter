@@ -21,7 +21,7 @@ const authMiddleware = async (req, res, next) => {
 
     const user = await verifyToken(token); //מאמת את הטוקן שנשלח מהמשתמש 
     req.user = user; 
-    logger.info("Authenticated user token: "); //${token}
+    logger.info(`Authenticated token for user: ${user.username || 'unknown'}`);//${token}
     next();
 
   } catch (error) {
