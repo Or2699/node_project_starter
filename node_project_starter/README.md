@@ -71,6 +71,7 @@ project-folder/
 └── package.json             # הגדרות פרויקט ותלויות
 
 POST /users/register  //הרשמה
+POST /users/login //התחברות
 GET /meals/search?s=Chicken //חיפוש מנות לפי שם 
 GET /meals/:id //קבלת מנה לפי מזהה
 DELETE /users/:token //מחיקת משתמש לפי טוקן

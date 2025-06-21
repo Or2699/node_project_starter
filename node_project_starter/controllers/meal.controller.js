@@ -1,22 +1,24 @@
-import { 
-    searchMealsByName, 
-    getMealsByCategory, 
-    getMealById 
-  } from '../services/meal.service.js';
+// import { 
+//     searchMealsByName, 
+//     getMealsByCategory, 
+//     getMealById 
+//   } from '../services/meal.service.js';
+
+  import * as service from '../services/meal.service.js'; //מכיוון שיש לפונקציות את אותו השם אז נייבא את כל הקובץ בשם סרוויס וכך נוכל לקחת ממנו ולהבדיל 
   
-  import { createLogger } from '../utils/logger.js'; // ודא שזו בדיוק התיקייה/שם הקובץ אצלך
+  import { createLogger } from '../utiles/logger.js'; 
   
   const logger = createLogger('MealController');
   
   export const searchMealsByName = async (req, res) => {
     try {
-      const searchTerm = req.query.s;
+      const searchTerm = req.query.str;
       if (!searchTerm) {
         logger.warn('Missing search term in query');
         return res.status(400).json({ message: 'Missing search term' });
       }
   
-      const meals = await searchMealsByName(searchTerm);
+      const meals = await service.searchMealsByName(searchTerm);
       logger.info(`Found ${meals.length} meals for search: ${searchTerm}`);
       res.json(meals);
     } catch (error) {
@@ -28,7 +30,7 @@ import {
   export const getMealsByCategory = async (req, res) => {
     try {
       const category = req.params.category;
-      const meals = await getMealsByCategory(category);
+      const meals = await service.getMealsByCategory(category);
       logger.info(`Fetched ${meals.length} meals in category: ${category}`);
       res.json(meals);
     } catch (error) {
@@ -36,11 +38,12 @@ import {
       res.status(500).json({ message: 'Error getting meals by category', error: error.message });
     }
   };
+
   
   export const getMealById = async (req, res) => {
     try {
       const id = req.params.id;
-      const meal = await getMealById(id);
+      const meal = await service.getMealById(id);
   
       if (!meal) {
         logger.warn(`Meal not found with ID: ${id}`);

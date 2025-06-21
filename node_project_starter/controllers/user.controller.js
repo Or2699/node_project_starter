@@ -1,5 +1,5 @@
-import { register, deleteUserByToken } from '../services/user.service.js';
-import { createLogger } from '../utils/logger.js';
+import { register, login, deleteUserByToken } from '../services/user.service.js';
+import { createLogger } from '../utiles/logger.js';
 
 const logger = createLogger('UserController');
 
@@ -19,6 +19,25 @@ export const registerUser = async (req, res) => {
   } catch (error) {
     logger.error(`Registration failed: ${error.message}`);
     res.status(500).json({ message: 'Registration failed', error: error.message });
+  }
+};
+
+export const loginUser = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      logger.warn('Missing username or password in login');
+      return res.status(400).json({ message: 'Username and password are required' });
+    }
+
+    const user = await login(username, password);
+    logger.info(`User logged in: ${username}`);
+
+    res.json({ message: 'Login successful', token: user.token });
+  } catch (error) {
+    logger.warn(`Login failed for user: ${req.body.username}`);
+    res.status(401).json({ message: 'Login failed', error: error.message });
   }
 };
 

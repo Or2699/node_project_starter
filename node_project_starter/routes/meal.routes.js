@@ -1,11 +1,15 @@
 import express from 'express';
+import authMiddleware from './Middlewares/auth.middleware.js';
 import {
   getMealById,
   searchMealsByName,
   getMealsByCategory
 } from '../controllers/meal.controller.js';
 
+
 const router = express.Router();
+
+router.use(authMiddleware);  //בדיקת טוקן  
 
 // GET api/meals/search?s=Chicken
 router.get('/search', searchMealsByName);
