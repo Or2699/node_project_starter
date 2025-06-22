@@ -76,11 +76,38 @@ GET /meals/search?s=Chicken //חיפוש מנות לפי שם
 GET /meals/:id //קבלת מנה לפי מזהה
 DELETE /users/:token //מחיקת משתמש לפי טוקן
 
-## דוגמאות 
+
+## דוגמאות להרצה בפאוורשל או בסיאמדי
+curl -X POST "http://localhost:5003/api/users/register" -H "Content-Type: application/json" -d "{\"username\": \"or123\", \"password\": \"123456\"}"
+
+--> {"message":"User registered successfully","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im9yMTIzIiwiaWF0IjoxNzUwNTc3MDIzLCJleHAiOjE3NTA2NjM0MjN9.opb2ZdLsmqkhwERvZI83fyNnFj67v6cvN9KqiHoVxV4"}
+
+curl -X POST "http://localhost:5003/api/users/login" -H "Content-Type: application/json" -d "{\"username\": \"or123\", \"password\": \"123456\"}" 
+
+--> {"message":"Login successful","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im9yMTIzIiwiaWF0IjoxNzUwNTc3MDcwLCJleHAiOjE3NTA2NjM0NzB9.RIm8LjaMskS4ZEHxcA2hJL70H-WYSSGeuSgqA8M1uHc"}
+
+curl -X DELETE "http://localhost:5003/api/users/<USERNAME>" -H "Authorization: Bearer <JWT_TOKEN>"
+
+-->{"message":"User deleted successfully"}
+
+curl -X GET "http://localhost:5003/api/meals/search?str=chicken" -H "Authorization: Bearer <JWT_TOKEN>"
+
+--> [{"idMeal":"52795","strMeal":"Chicken Handi","strMealAlternate":null,"strCategory":"Chicken","strArea":"Indian","strInstructions":"Take a large pot or wok, big enough to cook all the chicken, and heat the oil in it. Once the oil is hot, add sliced onion and fry them until deep golden brown....
+
+curl -X GET "http://localhost:5003/api/meals/category/Seafood" -H "Authorization: Bearer <JWT_TOKEN>"
+
+--> [{"strMeal":"Baked salmon with fennel & tomatoes","strMealThumb":"https://www.themealdb.com/images/media/meals/1548772327.jpg","idMeal":"52959"},{"strMeal":"Cajun spiced fish tacos","strMealThumb":"https://www.themealdb.com/images/media/meals/uvuyxu1503067369.jpg","idMeal":"52819"}....
+
+
+curl -X GET "http://localhost:5003/api/meals/52772" -H "Authorization: Bearer <JWT_TOKEN>"
+
+--> {"idMeal":"52772","strMeal":"Teriyaki Chicken Casserole","strMealAlternate":null,"strCategory":"Chicken","strArea":"Japanese","strInstructions":"Preheat oven to 350° F. Spray a 9x13-inch baking pan with non-stick spray.\r\nCombine soy sauce, ½ cup water, brown sugar, ginger and garlic in a small saucepan and cover. Bring to a boil over medium heat....
+
+## סיכום דוגמאות
 GET https://www.themealdb.com/api/json/v1/1/search.php?s=Chicken
 GET https://www.themealdb.com/api/json/v1/1/lookup.php?i=52879
 POST /users/register
-DELETE /users/:token
+DELETE /users/:username
 
 
 ## הסברים 

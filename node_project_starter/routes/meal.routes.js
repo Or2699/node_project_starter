@@ -1,5 +1,5 @@
 import express from 'express';
-import authMiddleware from './Middlewares/auth.middleware.js';
+import authMiddleware from '../Middlewares/auth.middleware.js';
 import {
   getMealById,
   searchMealsByName,

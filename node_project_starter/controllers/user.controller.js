@@ -1,4 +1,4 @@
-import { register, login, deleteUserByToken } from '../services/user.service.js';
+import { registerUserService, loginUserService, deleteUserByTokenService } from '../services/user.service.js';
 import { createLogger } from '../utiles/logger.js';
 
 const logger = createLogger('UserController');
@@ -12,7 +12,7 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Username and password are required' });
     }
 
-    const user = await register(username, password);
+    const user = await registerUserService(username, password);
     logger.info(`User registered: ${username}`);
 
     res.status(201).json({ message: 'User registered successfully', token: user.token });
@@ -31,7 +31,7 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Username and password are required' });
     }
 
-    const user = await login(username, password);
+    const user = await loginUserService(username, password);
     logger.info(`User logged in: ${username}`);
 
     res.json({ message: 'Login successful', token: user.token });
@@ -43,15 +43,20 @@ export const loginUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const token = req.params.token;
+    const uName = req.params.username;
 
-    const deleted = await deleteUserByToken(token);
+    if (req.user.username !== uName) {
+        logger.warn(`Unauthorized delete attempt by ${req.user.username} on ${uName}`);
+        return res.status(403).json({ message: 'Forbidden: You can only delete your own account' });
+    }
+
+    const deleted = await deleteUserByTokenService(uName);
     if (!deleted) {
-      logger.warn(`Delete failed: token not found (${token})`);
+      logger.warn(`Delete failed: username not found (${uName})`);
       return res.status(404).json({ message: 'User not found' });
     }
 
-    logger.info(`User deleted with token: ${token}`);
+    logger.info(`User deleted with userName: ${uName}`);
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
     logger.error(`Deletion failed: ${error.message}`);

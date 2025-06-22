@@ -1,4 +1,4 @@
-import { createToken } from '../utiles/token.util.js';
+import { createToken } from '../utiles/token.js';
 import { hashPassword, verifyPassword } from '../utiles/hash.js'; 
 import { createLogger } from '../utiles/logger.js'; 
 
@@ -14,7 +14,7 @@ export const registerUserService = async (username, password) => {
   }
 
   const hashedPassword = await hashPassword(password); 
-  const token = createToken({ username });
+  const token = await createToken({ username });
 
   const newUser = { username, password: hashedPassword, token };
   users.push(newUser);
@@ -23,35 +23,39 @@ export const registerUserService = async (username, password) => {
   return { username, token };
 };
 
-// התחברות לפי טוקן וסיסמה
-export const loginUserService = async (token, password) => {
-  const user = users.find(user => user.token === token);
-  if (!user) {
-    logger.warn(`Login failed - Invalid token: ${token}`);
-    throw new Error('Invalid token');
-  }
+// התחברות לפי שם משתמש וסיסמה
+export const loginUserService = async (username, password) => {
+    const user = users.find(user => user.username === username); 
+    if (!user) {
+      logger.warn(`Login failed - Username not found: ${username}`);
+      throw new Error('Invalid username');
+    }
+  
+    const isMatch = await verifyPassword(password, user.password);
+    if (!isMatch) {
+      logger.warn(`Login failed - Incorrect password for user: ${user.username}`);
+      throw new Error('Incorrect password');
+    }
+  
+    const token = await createToken({ username: user.username });
+  
+    logger.info(`User logged in: ${user.username}`);
+    return { username: user.username, token }; 
+  };
+  
 
-  const isMatch = await verifyPassword(password, user.password); 
-  if (!isMatch) {
-    logger.warn(`Login failed - Incorrect password for user: ${user.username}`);
-    throw new Error('Incorrect password');
-  }
-
-  logger.info(`User logged in: ${user.username}`);
-  return { username: user.username };
-};
-
-// מחיקת משתמש לפי טוקן
-export const deleteUserService = (token) => {
-  const index = users.findIndex(user => user.token === token);
-  if (index === -1) {
-    logger.warn(`Delete failed - User not found for token: ${token}`);
-    throw new Error('User not found');
-  }
-
-  const deletedUser = users[index].username;
-  users.splice(index, 1); //פונקציה שמוחקת מתוך מערך לפי אינדקס פתיחה וכמה למחוק 
-
-  logger.info(`User deleted: ${deletedUser}`);
-  return { message: 'User deleted successfully' };
-};
+// מחיקת משתמש לפי יוזר
+export const deleteUserByTokenService = (username) => {
+    const index = users.findIndex(user => user.username === username); 
+    if (index === -1) {
+      logger.warn(`Delete failed - User not found for username: ${username}`);
+      throw new Error('User not found');
+    }
+  
+    const deletedUser = users[index].username;
+    users.splice(index, 1); //פונקציה שמוחקת מתוך מערך לפי אינדקס פתיחה וכמה למחוק 
+  
+    logger.info(`User deleted: ${deletedUser}`);
+    return { message: 'User deleted successfully' };
+  };
+  

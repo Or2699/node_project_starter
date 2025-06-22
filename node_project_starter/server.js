@@ -4,7 +4,7 @@ import app from './app.js';   // מייבא את האפליקציה שהגדרת
 
 //const PORT = process.env.PORT || 5003;
 
-app.listen(PORT, () => {
+app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
 
